@@ -1,0 +1,2081 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>V-ADDON | HOME</title>
+    <!-- Supabase JS SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0c1325 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 15, 30, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            box-shadow: 0 0 15px rgba(247, 147, 30, 0.5);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .site-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff9a5e;
+        }
+
+        .hamburger {
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background: white;
+            border-radius: 2px;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            right: -300px;
+            width: 280px;
+            height: 100%;
+            background: rgba(10, 15, 30, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 2000;
+            transition: right 0.3s ease;
+            padding: 70px 20px 20px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar.active {
+            right: 0;
+        }
+
+        .sidebar .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #ff9a5e;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+        }
+
+        .sidebar-menu li {
+            margin-bottom: 15px;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .sidebar-menu li a:hover {
+            background: #ff6b35;
+        }
+
+        .user-info {
+            padding: 15px;
+            background: rgba(255, 107, 53, 0.2);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .user-username {
+            font-size: 14px;
+            color: #ff9a5e;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            background: #ff4444;
+            margin-top: 10px;
+            padding: 8px;
+            font-size: 12px;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .spacer {
+            height: 80px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(247, 147, 30, 0.05));
+            border-radius: 30px;
+            margin-bottom: 40px;
+        }
+
+        .welcome-section h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .welcome-section p {
+            color: #aaa;
+        }
+
+        .addon-card {
+            background: rgba(20, 25, 45, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .addon-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 107, 53, 0.5);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            pointer-events: none;
+        }
+
+        .card-content {
+            padding: 18px 22px;
+            pointer-events: auto;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-icon {
+            font-size: 28px;
+        }
+
+        .card-creator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+        }
+
+        .card-creator-name span {
+            color: #ff9a5e;
+            font-weight: bold;
+        }
+
+        .preview-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+            background: rgba(0, 0, 0, 0.4);
+        }
+
+        .preview-section.active {
+            max-height: 800px;
+            transition: max-height 0.5s ease-in;
+        }
+
+        .preview-inner {
+            padding: 20px 22px;
+        }
+
+        .preview-desc {
+            line-height: 1.7;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .preview-desc h4 {
+            color: #ff9a5e;
+            margin-bottom: 10px;
+        }
+
+        .version-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .version-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .version-btn:hover {
+            background: #ff6b35;
+        }
+
+        .version-note {
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 12px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #666;
+            font-size: 0.75rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: #0f1425;
+            max-width: 550px;
+            width: 90%;
+            border-radius: 25px;
+            padding: 30px;
+            border: 1px solid #ff6b35;
+            max-height: 85%;
+            overflow-y: auto;
+        }
+
+        .modal-content h2 {
+            color: #ff9a5e;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .modal-content input, .modal-content textarea, .modal-content select {
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            background: #1a1f35;
+            border: 1px solid #333;
+            border-radius: 12px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .modal-content input:focus, .modal-content textarea:focus {
+            outline: none;
+            border-color: #ff6b35;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 8px;
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        .file-preview {
+            background: #1a1f35;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px dashed #ff6b35;
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .image-preview-item {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid #ff6b35;
+        }
+
+        .image-preview-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview-item .remove-img {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: #ff4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .modal-content button {
+            background: linear-gradient(135deg, #ff6b35, #f7931e);
+            border: none;
+            padding: 14px;
+            border-radius: 40px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .modal-content button:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-content .close-modal {
+            background: #333;
+            margin-top: 12px;
+        }
+
+        .my-addon-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .my-addon-info {
+            flex: 1;
+        }
+
+        .my-addon-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn {
+            background: #ff9800;
+            border: none;
+            padding: 5px 12px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .edit-btn:hover {
+            background: #e68900;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background: #ff9800;
+            color: #000;
+        }
+
+        .status-approved {
+            background: #4caf50;
+        }
+
+        .status-rejected {
+            background: #ff4444;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .admin-table td {
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            vertical-align: top;
+        }
+
+        .btn-small {
+            background: #4caf50;
+            padding: 5px 10px;
+            font-size: 12px;
+            width: auto;
+            margin-right: 5px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-danger {
+            background: #ff4444;
+        }
+
+        .live-addon-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .live-addon-info {
+            flex: 1;
+        }
+
+        .live-addon-title {
+            font-weight: bold;
+            color: #ff9a5e;
+        }
+
+        .delete-btn {
+            background: #ff4444;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .section-title {
+            color: #ff9a5e;
+            margin: 20px 0 15px 0;
+            padding-bottom: 5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .version-input-group {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .remove-version {
+            background: #ff4444;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        .add-version-btn {
+            background: #4caf50;
+            margin-top: 10px;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            z-index: 9999;
+            animation: fadeInOut 3s ease;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(20px); }
+            15% { opacity: 1; transform: translateY(0); }
+            85% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+
+        @media (max-width: 768px) {
+            .card-title { font-size: 1.2rem; }
+            .card-image { height: 150px; }
+            .welcome-section h1 { font-size: 1.5rem; }
+            .my-addon-item { flex-direction: column; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-container">
+            <div class="header-left">
+                <div class="logo" id="logoBtn">⛏️</div>
+                <div class="site-title">V-ADDON</div>
+            </div>
+            <div class="hamburger" id="hamburgerBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="sidebar" id="sidebar">
+        <div class="close-btn" id="closeSidebar">✕</div>
+        <div id="userInfoSidebar" class="user-info" style="display:none;">
+            <div>👤 <span id="sidebarUsername">User</span></div>
+            <button class="logout-btn" id="sidebarLogoutBtn">Logout</button>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" id="loginMenuBtn">🔐 Login / Register</a></li>
+            <li><a href="#" id="myAddonsMenuBtn" style="display:none;">📦 Add-on Saya</a></li>
+            <li><a href="#" id="accountMenuBtn" style="display:none;">👤 Akun Saya</a></li>
+            <li><a href="#" id="uploadAddonMenuBtn" style="display:none;">📤 Upload Add-on</a></li>
+            <li><a href="#" id="reportMenuBtn">📋 Laporkan Bug / Saran</a></li>
+            <li><a href="#" id="requestSongBtn">🎵 Request Song Update</a></li>
+        </ul>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <div class="spacer"></div>
+    <div class="container" id="app">
+        <div class="welcome-section">
+            <h1>✨ V-ADDON ✨</h1>
+            <p>Download berbagai add-on keren untuk Minecraft kamu!</p>
+        </div>
+        <div id="addonsList">
+            <div style="text-align: center; padding: 50px;">Loading add-ons...</div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 V-ADDON | Not an official Minecraft product.</p>
+    </footer>
+
+    <!-- Modal Login/Register -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <h2 id="authTitle">🔐 Login</h2>
+            <form id="authForm">
+                <label>👤 Username</label>
+                <input type="text" id="authUsername" placeholder="Username" required>
+                <label>🔒 Password</label>
+                <input type="password" id="authPassword" placeholder="Password" required>
+                <button type="submit" id="authSubmitBtn">Login</button>
+            </form>
+            <p style="text-align:center; margin:15px 0; color:#aaa;">
+                <span id="authToggleText">Belum punya akun? </span>
+                <a href="#" id="authToggleBtn" style="color:#ff9a5e;">Daftar</a>
+            </p>
+            <button class="close-modal" onclick="closeModal('authModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal My Addons -->
+    <div id="myAddonsModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <h2>📦 Add-on Saya</h2>
+            <div id="myAddonsList"></div>
+            <button class="close-modal" onclick="closeModal('myAddonsModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Edit Add-on -->
+    <div id="editAddonModal" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <h2>✏️ Edit Add-on</h2>
+            <form id="editAddonForm">
+                <input type="hidden" id="editAddonId">
+                
+                <label>🏷️ Nama Add-on</label>
+                <input type="text" id="editAddonTitle" required>
+                
+                <label>👤 Nama Pembuat (Tampil di publik)</label>
+                <input type="text" id="editAddonCreator" required>
+                
+                <label>📝 Deskripsi</label>
+                <textarea id="editAddonDesc" rows="3" required></textarea>
+                
+                <label>✨ Fitur</label>
+                <textarea id="editAddonFeatures" rows="3" placeholder="✓ Fitur 1\n✓ Fitur 2"></textarea>
+                
+                <label>📸 Foto Review (upload baru untuk tambah)</label>
+                <input type="file" id="editAddonImages" accept="image/*" multiple>
+                <div class="image-preview" id="editImagePreviewContainer"></div>
+                
+                <div id="versionsContainer">
+                    <label>📦 Versi File (maksimal v4)</label>
+                </div>
+                
+                <button type="button" id="addVersionBtn" class="add-version-btn" style="background:#4caf50; margin-bottom:15px;">+ Tambah Versi Baru (v1-v4)</button>
+                
+                <button type="submit">💾 Simpan Perubahan</button>
+            </form>
+            <button class="close-modal" onclick="closeModal('editAddonModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Account -->
+    <div id="accountModal" class="modal">
+        <div class="modal-content">
+            <h2>👤 Akun Saya</h2>
+            <div id="accountInfo"></div>
+            <button class="close-modal" onclick="closeModal('accountModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Upload Add-on -->
+    <div id="uploadFrontModal" class="modal">
+        <div class="modal-content">
+            <h2>📤 Upload Add-on Baru</h2>
+            <p style="color:#aaa; font-size:13px; text-align:center; margin-bottom:20px;">Isi data add-on kamu dengan lengkap. File akan ditinjau admin terlebih dahulu.</p>
+            <form id="uploadFrontForm">
+                <label>🏷️ Nama Add-on</label>
+                <input type="text" id="frontAddonTitle" placeholder="Contoh: Weapon+ Addon" required>
+                
+                <label>👤 Nama Pembuat (Tampil di publik)</label>
+                <input type="text" id="frontAddonCreator" placeholder="Nama atau username kamu" required>
+                
+                <label>📝 Deskripsi</label>
+                <textarea id="frontAddonDesc" placeholder="Jelaskan tentang add-on kamu..." rows="3" required></textarea>
+                
+                <label>✨ Fitur (opsional)</label>
+                <textarea id="frontAddonFeatures" placeholder="✓ MCPE 1.21+\n✓ Fitur lainnya" rows="3"></textarea>
+                
+                <label>🖼️ Upload Foto Review Add-on (maks 1 foto, 5MB)</label>
+                <input type="file" id="frontAddonImages" accept="image/*">
+                <div class="image-preview" id="imagePreviewContainer"></div>
+                
+                <label>📎 File Add-on (.mcaddon / .zip / .mcpack) - Maks 50MB</label>
+                <input type="file" id="frontAddonFile" accept=".mcaddon,.zip,.mcpack,.mcworld" required>
+                <div class="file-preview" id="filePreview" style="display:none;">
+                    📄 File siap: <span id="fileName"></span>
+                </div>
+                
+                <button type="submit">🚀 Kirim ke Admin</button>
+            </form>
+            <button class="close-modal" onclick="closeModal('uploadFrontModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Report (Bug/Saran) -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <h2>📋 Laporkan Bug / Saran</h2>
+            <p style="color:#aaa; font-size:13px; text-align:center; margin-bottom:20px;">Kirim laporan bug atau saran untuk pengembangan V-ADDON.</p>
+            <form id="reportForm">
+                <label>📝 Jenis Laporan</label>
+                <select id="reportType" required>
+                    <option value="bug">🐛 Bug / Error</option>
+                    <option value="saran">💡 Saran / Fitur Baru</option>
+                    <option value="lainnya">📌 Lainnya</option>
+                </select>
+                
+                <label>📧 Email (opsional)</label>
+                <input type="email" id="reportEmail" placeholder="Email untuk respon balik">
+                
+                <label>📋 Judul Laporan</label>
+                <input type="text" id="reportTitle" placeholder="Ringkasan masalah/saran" required>
+                
+                <label>📝 Deskripsi Lengkap</label>
+                <textarea id="reportDesc" placeholder="Jelaskan secara detail bug yang ditemukan atau saran Anda..." rows="5" required></textarea>
+                
+                <button type="submit">📨 Kirim Laporan</button>
+            </form>
+            <button class="close-modal" onclick="closeModal('reportModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Request Song -->
+    <div id="requestModal" class="modal">
+        <div class="modal-content">
+            <h2>🎵 Request Song</h2>
+            <form id="requestForm">
+                <input type="text" id="songName" placeholder="Nama Lagu" required>
+                <input type="text" id="artistName" placeholder="Nama Artis" required>
+                <textarea id="songNote" placeholder="Catatan (opsional)" rows="3"></textarea>
+                <button type="submit">Kirim Request</button>
+            </form>
+            <button class="close-modal" onclick="closeModal('requestModal')">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Modal Admin Panel -->
+    <div id="adminModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <h2>👑 Admin Panel</h2>
+            <div id="adminContent"></div>
+            <button class="close-modal" onclick="closeModal('adminModal')">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // ========== SUPABASE CONFIG ==========
+        const SUPABASE_URL = 'https://qyqngforwcpmkagctzrk.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_57nu-niwesk8CJ21aSiu3g_n-2MU57y';
+        
+        let supabaseClient = null;
+        let currentUser = null;
+        let liveAddons = [];
+        let selectedImageFiles = [];
+        let editSelectedImageFiles = [];
+        let currentEditVersions = {};
+
+        // Batasan upload
+        const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
+        const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB
+
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.background = isError ? '#ff4444' : '#4caf50';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function simpleHash(text) {
+            let hash = 0;
+            for (let i = 0; i < text.length; i++) {
+                hash = ((hash << 5) - hash) + text.charCodeAt(i);
+                hash |= 0;
+            }
+            return btoa(hash.toString() + text + 'VADDON_SALT_2024');
+        }
+
+        function initSupabase() {
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                checkSession();
+                renderCards();
+            } else {
+                setTimeout(initSupabase, 100);
+            }
+        }
+
+        function checkSession() {
+            const savedUser = localStorage.getItem('vaddon_user');
+            if (savedUser) {
+                try {
+                    currentUser = JSON.parse(savedUser);
+                    updateUIForLoggedInUser();
+                } catch(e) {
+                    currentUser = null;
+                    updateUIForLoggedOutUser();
+                }
+            } else {
+                currentUser = null;
+                updateUIForLoggedOutUser();
+            }
+        }
+
+        function updateUIForLoggedInUser() {
+            document.getElementById('loginMenuBtn').style.display = 'none';
+            document.getElementById('myAddonsMenuBtn').style.display = 'block';
+            document.getElementById('accountMenuBtn').style.display = 'block';
+            document.getElementById('uploadAddonMenuBtn').style.display = 'block';
+            document.getElementById('userInfoSidebar').style.display = 'block';
+            document.getElementById('sidebarUsername').textContent = currentUser.username;
+        }
+
+        function updateUIForLoggedOutUser() {
+            document.getElementById('loginMenuBtn').style.display = 'block';
+            document.getElementById('myAddonsMenuBtn').style.display = 'none';
+            document.getElementById('accountMenuBtn').style.display = 'none';
+            document.getElementById('uploadAddonMenuBtn').style.display = 'none';
+            document.getElementById('userInfoSidebar').style.display = 'none';
+        }
+
+        // ========== AUTH ==========
+        let isLoginMode = true;
+
+        document.getElementById('authToggleBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            const title = document.getElementById('authTitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const toggleText = document.getElementById('authToggleText');
+            
+            if (isLoginMode) {
+                title.textContent = '🔐 Login';
+                submitBtn.textContent = 'Login';
+                toggleText.innerHTML = 'Belum punya akun? ';
+            } else {
+                title.textContent = '📝 Register';
+                submitBtn.textContent = 'Daftar';
+                toggleText.innerHTML = 'Sudah punya akun? ';
+            }
+        });
+
+        document.getElementById('authForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('authUsername').value.trim();
+            const password = document.getElementById('authPassword').value;
+            
+            if (!username || !password) {
+                alert('Username dan password harus diisi!');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('authSubmitBtn');
+            submitBtn.textContent = isLoginMode ? 'Login...' : 'Mendaftar...';
+            submitBtn.disabled = true;
+            
+            if (isLoginMode) {
+                const { data, error } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .single();
+                
+                if (error || !data) {
+                    alert('Username tidak ditemukan!');
+                } else if (data.password !== simpleHash(password)) {
+                    alert('Password salah!');
+                } else {
+                    currentUser = { id: data.id, username: data.username };
+                    localStorage.setItem('vaddon_user', JSON.stringify(currentUser));
+                    updateUIForLoggedInUser();
+                    closeModal('authModal');
+                    showToast(`✅ Login berhasil! Selamat datang ${username}`);
+                }
+            } else {
+                const { data: existing, error: checkError } = await supabaseClient
+                    .from('users')
+                    .select('*')
+                    .eq('username', username)
+                    .single();
+                
+                if (existing) {
+                    alert('Username sudah terdaftar! Silakan pilih username lain.');
+                } else {
+                    const hashedPassword = simpleHash(password);
+                    const { data, error } = await supabaseClient
+                        .from('users')
+                        .insert([{ username: username, password: hashedPassword }])
+                        .select();
+                    
+                    if (error) {
+                        alert('Gagal mendaftar: ' + error.message);
+                    } else {
+                        alert('✅ Pendaftaran berhasil! Silakan login.');
+                        isLoginMode = true;
+                        document.getElementById('authTitle').textContent = '🔐 Login';
+                        document.getElementById('authSubmitBtn').textContent = 'Login';
+                        document.getElementById('authToggleText').innerHTML = 'Belum punya akun? ';
+                        document.getElementById('authUsername').value = '';
+                        document.getElementById('authPassword').value = '';
+                    }
+                }
+            }
+            
+            submitBtn.textContent = isLoginMode ? 'Login' : 'Daftar';
+            submitBtn.disabled = false;
+        });
+
+        function logout() {
+            localStorage.removeItem('vaddon_user');
+            currentUser = null;
+            updateUIForLoggedOutUser();
+            closeSidebar();
+            showToast('Anda telah logout.');
+        }
+
+        document.getElementById('sidebarLogoutBtn').addEventListener('click', logout);
+
+        // ========== MY ADDONS ==========
+        async function showMyAddons() {
+            if (!currentUser) {
+                alert('Silakan login terlebih dahulu!');
+                return;
+            }
+            
+            const { data, error } = await supabaseClient
+                .from('addon_submissions')
+                .select('*')
+                .eq('username', currentUser.username)
+                .order('created_at', { ascending: false });
+            
+            if (error) {
+                alert('Gagal mengambil data: ' + error.message);
+                return;
+            }
+            
+            let html = '';
+            if (!data || data.length === 0) {
+                html = '<p style="text-align:center; color:#aaa;">Anda belum mengupload add-on apapun.</p>';
+            } else {
+                data.forEach(addon => {
+                    let statusClass = '';
+                    let statusText = '';
+                    switch(addon.status) {
+                        case 'pending': statusClass = 'status-pending'; statusText = 'Menunggu'; break;
+                        case 'approved': statusClass = 'status-approved'; statusText = 'Disetujui'; break;
+                        case 'rejected': statusClass = 'status-rejected'; statusText = 'Ditolak'; break;
+                        default: statusClass = 'status-pending'; statusText = addon.status;
+                    }
+                    
+                    let fileVersions = {};
+                    try {
+                        fileVersions = addon.file_versions ? (typeof addon.file_versions === 'string' ? JSON.parse(addon.file_versions) : addon.file_versions) : {};
+                    } catch(e) { fileVersions = {}; }
+                    if (addon.file_url && !fileVersions.v1) {
+                        fileVersions.v1 = addon.file_url;
+                    }
+                    const versionCount = Object.keys(fileVersions).length;
+                    
+                    html += `
+                        <div class="my-addon-item">
+                            <div class="my-addon-info">
+                                <strong>${escapeHtml(addon.title)}</strong><br>
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                                ${versionCount > 0 ? `<span style="margin-left:8px;">📦 ${versionCount} versi</span>` : ''}<br>
+                                <small>📅 ${new Date(addon.created_at).toLocaleString()}</small>
+                            </div>
+                            <div class="my-addon-buttons">
+                                ${addon.status !== 'approved' ? `<button class="edit-btn" onclick="openEditModal(${addon.id})">✏️ Edit</button>` : '<button class="edit-btn" style="background:#555;" disabled>🔒 Terbit</button>'}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            document.getElementById('myAddonsList').innerHTML = html;
+            document.getElementById('myAddonsModal').style.display = 'flex';
+        }
+
+        // ========== EDIT ADD-ON ==========
+        window.openEditModal = async function(id) {
+            const { data: addon, error } = await supabaseClient
+                .from('addon_submissions')
+                .select('*')
+                .eq('id', id)
+                .single();
+            
+            if (error) {
+                alert('Gagal mengambil data: ' + error.message);
+                return;
+            }
+            
+            document.getElementById('editAddonId').value = addon.id;
+            document.getElementById('editAddonTitle').value = addon.title || '';
+            document.getElementById('editAddonCreator').value = addon.creator || '';
+            document.getElementById('editAddonDesc').value = addon.description || '';
+            document.getElementById('editAddonFeatures').value = addon.features || '';
+            
+            let fileVersions = {};
+            try {
+                fileVersions = addon.file_versions ? (typeof addon.file_versions === 'string' ? JSON.parse(addon.file_versions) : addon.file_versions) : {};
+            } catch(e) { fileVersions = {}; }
+            if (addon.file_url && !fileVersions.v1) {
+                fileVersions.v1 = addon.file_url;
+            }
+            currentEditVersions = fileVersions;
+            
+            renderVersionInputs();
+            
+            let existingImages = [];
+            try {
+                existingImages = addon.review_images ? (typeof addon.review_images === 'string' ? JSON.parse(addon.review_images) : addon.review_images) : [];
+            } catch(e) { existingImages = []; }
+            
+            const editPreviewContainer = document.getElementById('editImagePreviewContainer');
+            editPreviewContainer.innerHTML = '';
+            if (existingImages.length > 0) {
+                existingImages.forEach((img, idx) => {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'image-preview-item';
+                    previewDiv.innerHTML = `
+                        <img src="${img}" alt="Existing">
+                        <div class="remove-img" onclick="removeExistingImage(${idx})">✕</div>
+                    `;
+                    editPreviewContainer.appendChild(previewDiv);
+                });
+            }
+            window.existingImagesToKeep = existingImages;
+            editSelectedImageFiles = [];
+            
+            document.getElementById('editAddonModal').style.display = 'flex';
+        };
+        
+        window.removeExistingImage = function(index) {
+            window.existingImagesToKeep.splice(index, 1);
+            const container = document.getElementById('editImagePreviewContainer');
+            container.innerHTML = '';
+            window.existingImagesToKeep.forEach((img, idx) => {
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'image-preview-item';
+                previewDiv.innerHTML = `
+                    <img src="${img}" alt="Existing">
+                    <div class="remove-img" onclick="removeExistingImage(${idx})">✕</div>
+                `;
+                container.appendChild(previewDiv);
+            });
+        };
+        
+        function renderVersionInputs() {
+            const container = document.getElementById('versionsContainer');
+            const versionOrder = ['v1', 'v2', 'v3', 'v4'];
+            let html = '<label>📦 Versi File (maksimal v4)</label>';
+            
+            versionOrder.forEach(ver => {
+                const fileUrl = currentEditVersions[ver] || '';
+                html += `
+                    <div class="version-input-group">
+                        <div class="version-header">
+                            <strong style="color:#ff9a5e;">${ver.toUpperCase()}</strong>
+                            ${ver !== 'v1' && fileUrl ? `<button type="button" class="remove-version" onclick="removeVersion('${ver}')">Hapus ${ver.toUpperCase()}</button>` : ''}
+                        </div>
+                        <input type="file" id="editFile_${ver}" accept=".mcaddon,.zip,.mcpack,.mcworld" style="margin-bottom:5px;">
+                        ${fileUrl ? `<p style="font-size:11px; color:#888;">File saat ini: <a href="${fileUrl}" target="_blank" style="color:#4caf50;">${fileUrl.split('/').pop()}</a></p>` : '<p style="font-size:11px; color:#888;">Belum ada file</p>'}
+                        <input type="hidden" id="editFileUrl_${ver}" value="${fileUrl}">
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+        
+        window.removeVersion = function(ver) {
+            delete currentEditVersions[ver];
+            renderVersionInputs();
+        };
+        
+        document.getElementById('addVersionBtn').addEventListener('click', () => {
+            const existingVers = Object.keys(currentEditVersions);
+            const availableVers = ['v1', 'v2', 'v3', 'v4'].filter(v => !existingVers.includes(v));
+            if (availableVers.length > 0) {
+                currentEditVersions[availableVers[0]] = '';
+                renderVersionInputs();
+            } else {
+                alert('Maksimal sudah 4 versi!');
+            }
+        });
+        
+        const editImageInput = document.getElementById('editAddonImages');
+        editImageInput.addEventListener('change', (e) => {
+            editSelectedImageFiles = Array.from(e.target.files);
+            const previewContainer = document.getElementById('editImagePreviewContainer');
+            editSelectedImageFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'image-preview-item';
+                    previewDiv.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        <div class="remove-img" onclick="removeEditImage(${index})">✕</div>
+                    `;
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+        
+        window.removeEditImage = function(index) {
+            editSelectedImageFiles.splice(index, 1);
+            const previewContainer = document.getElementById('editImagePreviewContainer');
+            previewContainer.innerHTML = '';
+            window.existingImagesToKeep.forEach(img => {
+                const div = document.createElement('div');
+                div.className = 'image-preview-item';
+                div.innerHTML = `<img src="${img}"><div class="remove-img" onclick="removeExistingImage()">✕</div>`;
+                previewContainer.appendChild(div);
+            });
+            editSelectedImageFiles.forEach((file, idx) => {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    const div = document.createElement('div');
+                    div.className = 'image-preview-item';
+                    div.innerHTML = `<img src="${ev.target.result}"><div class="remove-img" onclick="removeEditImage(${idx})">✕</div>`;
+                    previewContainer.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        };
+        
+        async function uploadVersionFile(file, versionName, submissionId) {
+            if (!file) return null;
+            const fileName = `${submissionId}_${versionName}_${Date.now()}_${file.name}`;
+            const { data, error } = await supabaseClient.storage
+                .from('addon-files')
+                .upload(`submissions/${fileName}`, file);
+            if (error) {
+                console.error('Upload error:', error);
+                return null;
+            }
+            const { data: urlData } = supabaseClient.storage
+                .from('addon-files')
+                .getPublicUrl(`submissions/${fileName}`);
+            return urlData.publicUrl;
+        }
+        
+        document.getElementById('editAddonForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('editAddonId').value;
+            const title = document.getElementById('editAddonTitle').value;
+            const creator = document.getElementById('editAddonCreator').value;
+            const description = document.getElementById('editAddonDesc').value;
+            const features = document.getElementById('editAddonFeatures').value;
+            
+            let allImageUrls = [...(window.existingImagesToKeep || [])];
+            for (const file of editSelectedImageFiles) {
+                const fileName = `${Date.now()}_${file.name}`;
+                const { data, error } = await supabaseClient.storage
+                    .from('addon-files')
+                    .upload(`review_images/submission_${id}/${fileName}`, file);
+                if (!error) {
+                    const { data: urlData } = supabaseClient.storage
+                        .from('addon-files')
+                        .getPublicUrl(`review_images/submission_${id}/${fileName}`);
+                    allImageUrls.push(urlData.publicUrl);
+                }
+            }
+            
+            const versionOrder = ['v1', 'v2', 'v3', 'v4'];
+            const updatedVersions = {};
+            for (const ver of versionOrder) {
+                const fileInput = document.getElementById(`editFile_${ver}`);
+                const existingUrl = document.getElementById(`editFileUrl_${ver}`).value;
+                if (fileInput && fileInput.files.length > 0) {
+                    const newUrl = await uploadVersionFile(fileInput.files[0], ver, id);
+                    if (newUrl) updatedVersions[ver] = newUrl;
+                } else if (existingUrl) {
+                    updatedVersions[ver] = existingUrl;
+                }
+            }
+            
+            const { error: updateError } = await supabaseClient
+                .from('addon_submissions')
+                .update({
+                    title: title,
+                    creator: creator,
+                    description: description,
+                    features: features,
+                    review_images: allImageUrls,
+                    file_versions: updatedVersions,
+                    file_url: updatedVersions.v1 || null
+                })
+                .eq('id', id);
+            
+            if (updateError) {
+                alert('Gagal menyimpan perubahan: ' + updateError.message);
+            } else {
+                showToast('✅ Add-on berhasil diperbarui!');
+                closeModal('editAddonModal');
+                showMyAddons();
+            }
+        });
+
+        // ========== ACCOUNT INFO ==========
+        async function showAccount() {
+            if (!currentUser) {
+                alert('Silakan login terlebih dahulu!');
+                return;
+            }
+            
+            const { data, error } = await supabaseClient
+                .from('addon_submissions')
+                .select('*')
+                .eq('username', currentUser.username);
+            
+            const totalAddons = data ? data.length : 0;
+            const approvedAddons = data ? data.filter(a => a.status === 'approved').length : 0;
+            const pendingAddons = data ? data.filter(a => a.status === 'pending').length : 0;
+            
+            const html = `
+                <div style="text-align:center;">
+                    <div style="font-size:48px; margin-bottom:15px;">👤</div>
+                    <p><strong>Username:</strong> ${escapeHtml(currentUser.username)}</p>
+                    <hr style="margin:15px 0; border-color:#333;">
+                    <p><strong>📦 Total Add-on:</strong> ${totalAddons}</p>
+                    <p><strong>✅ Disetujui:</strong> ${approvedAddons}</p>
+                    <p><strong>⏳ Menunggu:</strong> ${pendingAddons}</p>
+                </div>
+            `;
+            document.getElementById('accountInfo').innerHTML = html;
+            document.getElementById('accountModal').style.display = 'flex';
+        }
+
+        // ========== IMAGE PREVIEW UPLOAD ==========
+        const imageInput = document.getElementById('frontAddonImages');
+        const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+
+        imageInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            
+            if (files.length > 1) {
+                alert('❌ Maksimal hanya 1 foto review!');
+                imageInput.value = '';
+                return;
+            }
+            
+            if (files.length > 0 && files[0].size > MAX_IMAGE_SIZE) {
+                alert(`❌ Ukuran gambar terlalu besar! Maksimal 5 MB.\nUkuran: ${(files[0].size / (1024 * 1024)).toFixed(2)} MB`);
+                imageInput.value = '';
+                return;
+            }
+            
+            selectedImageFiles = files;
+            imagePreviewContainer.innerHTML = '';
+            
+            if (files.length > 0) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'image-preview-item';
+                    previewDiv.innerHTML = `
+                        <img src="${event.target.result}" alt="Preview">
+                        <div class="remove-img" onclick="removeImage(0)">✕</div>
+                    `;
+                    imagePreviewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(files[0]);
+            }
+        });
+
+        window.removeImage = function(index) {
+            selectedImageFiles = [];
+            imageInput.value = '';
+            imagePreviewContainer.innerHTML = '';
+        };
+
+        // ========== CEK DUPLIKAT FILE ==========
+        async function checkDuplicateFileName(fileName) {
+            // Cek di tabel addon_submissions
+            const { data: existingSubs, error: subError } = await supabaseClient
+                .from('addon_submissions')
+                .select('file_name')
+                .eq('file_name', fileName);
+            
+            if (subError) {
+                console.error('Error cek duplikat:', subError);
+                return false;
+            }
+            
+            if (existingSubs && existingSubs.length > 0) {
+                return true;
+            }
+            
+            // Cek di tabel live_addons
+            const { data: existingLive, error: liveError } = await supabaseClient
+                .from('live_addons')
+                .select('versions');
+            
+            if (liveError) {
+                console.error('Error cek duplikat live:', liveError);
+                return false;
+            }
+            
+            if (existingLive) {
+                for (const addon of existingLive) {
+                    if (addon.versions) {
+                        const versions = typeof addon.versions === 'string' ? JSON.parse(addon.versions) : addon.versions;
+                        for (const url of Object.values(versions)) {
+                            if (url && url.includes(fileName)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return false;
+        }
+
+        // ========== LOAD LIVE ADD-ONS ==========
+        async function loadLiveAddons() {
+            if (!supabaseClient) return [];
+            try {
+                const { data, error } = await supabaseClient
+                    .from('live_addons')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                
+                if (error) {
+                    console.error('Error loading addons:', error);
+                    return [];
+                }
+                return data || [];
+            } catch (err) {
+                console.error('Error:', err);
+                return [];
+            }
+        }
+
+        // ========== RENDER CARDS ==========
+        async function renderCards() {
+            if (!supabaseClient) {
+                setTimeout(renderCards, 100);
+                return;
+            }
+            liveAddons = await loadLiveAddons();
+            const container = document.getElementById('addonsList');
+            
+            if (!liveAddons || liveAddons.length === 0) {
+                container.innerHTML = '<div style="text-align:center; padding:50px;">✨ Belum ada add-on. Upload add-on kamu melalui menu!</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            liveAddons.forEach(addon => {
+                let versions = {};
+                try {
+                    versions = typeof addon.versions === 'string' ? JSON.parse(addon.versions) : (addon.versions || {});
+                } catch(e) {
+                    versions = {};
+                }
+                const versionKeys = Object.keys(versions);
+                
+                let reviewImages = [];
+                try {
+                    reviewImages = typeof addon.review_images === 'string' ? JSON.parse(addon.review_images) : (addon.review_images || []);
+                } catch(e) {
+                    reviewImages = [];
+                }
+                const displayImage = reviewImages.length > 0 ? reviewImages[0] : (addon.image_url || 'https://picsum.photos/id/1/800/300');
+                
+                const card = document.createElement('div');
+                card.className = 'addon-card';
+                card.innerHTML = `
+                    <img src="${displayImage}" class="card-image" onerror="this.src='https://picsum.photos/800/300'">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <span class="card-icon">${addon.icon || '📦'}</span>
+                                ${escapeHtml(addon.title)}
+                            </div>
+                            <div class="card-creator">
+                                <span class="card-creator-name">👤 by <span>${escapeHtml(addon.creator)}</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="preview-section" id="preview-${addon.id}">
+                        <div class="preview-inner">
+                            <div class="preview-desc">
+                                <h4>📖 Deskripsi</h4>
+                                <p style="white-space: pre-line;">${escapeHtml(addon.description)}</p>
+                                <h4>✨ Fitur</h4>
+                                <p style="white-space: pre-line;">${escapeHtml(addon.features || 'Belum ada fitur ditambahkan')}</p>
+                                ${reviewImages.length > 0 ? '<h4>📸 Screenshot</h4><div style="display:flex; gap:10px; flex-wrap:wrap;">' + reviewImages.map(img => `<img src="${img}" style="width:120px; height:80px; object-fit:cover; border-radius:10px;">`).join('') + '</div>' : ''}
+                            </div>
+                            <div class="version-buttons" id="versions-${addon.id}"></div>
+                            <div class="version-note">💡 Klik versi yang ingin di-download</div>
+                        </div>
+                    </div>
+                `;
+                
+                const previewDiv = card.querySelector(`#preview-${addon.id}`);
+                const contentArea = card.querySelector('.card-content');
+                
+                contentArea.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const allPreviews = document.querySelectorAll('.preview-section');
+                    allPreviews.forEach(preview => {
+                        if (preview !== previewDiv && preview.classList.contains('active')) {
+                            preview.classList.remove('active');
+                        }
+                    });
+                    previewDiv.classList.toggle('active');
+                });
+                
+                const versionsContainer = card.querySelector(`#versions-${addon.id}`);
+                versionKeys.forEach(versionKey => {
+                    const btn = document.createElement('button');
+                    btn.className = 'version-btn';
+                    btn.innerHTML = `📥 Download ${versionKey.toUpperCase()}`;
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        window.open(versions[versionKey], '_blank');
+                    };
+                    versionsContainer.appendChild(btn);
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ========== UPLOAD MULTIPLE IMAGES ==========
+        async function uploadImages(files, folder) {
+            const uploadedUrls = [];
+            for (const file of files) {
+                const fileName = `${Date.now()}_${file.name}`;
+                const { data, error } = await supabaseClient.storage
+                    .from('addon-files')
+                    .upload(`review_images/${folder}/${fileName}`, file);
+                
+                if (error) {
+                    console.error('Upload image error:', error);
+                    continue;
+                }
+                
+                const { data: urlData } = supabaseClient.storage
+                    .from('addon-files')
+                    .getPublicUrl(`review_images/${folder}/${fileName}`);
+                
+                uploadedUrls.push(urlData.publicUrl);
+            }
+            return uploadedUrls;
+        }
+
+        // ========== FRONT END UPLOAD ==========
+        const fileInput = document.getElementById('frontAddonFile');
+        const filePreview = document.getElementById('filePreview');
+        const fileNameSpan = document.getElementById('fileName');
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                
+                if (file.size > MAX_FILE_SIZE) {
+                    alert(`❌ File terlalu besar! Maksimal 50 MB.\nUkuran: ${(file.size / (1024 * 1024)).toFixed(2)} MB`);
+                    fileInput.value = '';
+                    filePreview.style.display = 'none';
+                    return;
+                }
+                
+                const allowedExtensions = ['.mcaddon', '.zip', '.mcpack', '.mcworld'];
+                const fileExt = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+                if (!allowedExtensions.includes(fileExt)) {
+                    alert(`❌ Tipe file tidak didukung! Gunakan: .mcaddon, .zip, .mcpack, .mcworld`);
+                    fileInput.value = '';
+                    filePreview.style.display = 'none';
+                    return;
+                }
+                
+                fileNameSpan.textContent = file.name;
+                filePreview.style.display = 'block';
+            } else {
+                filePreview.style.display = 'none';
+            }
+        });
+
+        document.getElementById('uploadFrontForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                alert('Silakan login terlebih dahulu untuk upload add-on!');
+                closeModal('uploadFrontModal');
+                document.getElementById('authModal').style.display = 'flex';
+                return;
+            }
+            
+            const title = document.getElementById('frontAddonTitle').value;
+            const creator = document.getElementById('frontAddonCreator').value;
+            const description = document.getElementById('frontAddonDesc').value;
+            const features = document.getElementById('frontAddonFeatures').value;
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('Pilih file add-on terlebih dahulu!');
+                return;
+            }
+            
+            // CEK DUPLIKAT FILE BERDASARKAN NAMA FILE
+            const isDuplicate = await checkDuplicateFileName(file.name);
+            if (isDuplicate) {
+                alert(`❌ GAGAL UPLOAD!\n\nFile dengan nama "${file.name}" sudah pernah diupload sebelumnya.\n\nSilakan gunakan nama file yang berbeda.`);
+                return;
+            }
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '📤 Mengupload...';
+            submitBtn.disabled = true;
+            
+            const fileName = `${Date.now()}_${file.name}`;
+            const { data: uploadData, error: uploadError } = await supabaseClient.storage
+                .from('addon-files')
+                .upload(`submissions/${fileName}`, file);
+            
+            if (uploadError) {
+                alert('Gagal upload file: ' + uploadError.message);
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+                return;
+            }
+            
+            const { data: urlData } = supabaseClient.storage
+                .from('addon-files')
+                .getPublicUrl(`submissions/${fileName}`);
+            
+            const fileUrl = urlData.publicUrl;
+            
+            let imageUrls = [];
+            if (selectedImageFiles.length > 0) {
+                imageUrls = await uploadImages(selectedImageFiles, `submission_${Date.now()}`);
+            }
+            
+            const { error: insertError } = await supabaseClient
+                .from('addon_submissions')
+                .insert([{
+                    title: title,
+                    creator: creator,
+                    description: description,
+                    features: features,
+                    review_images: imageUrls,
+                    file_url: fileUrl,
+                    file_name: file.name,
+                    file_size: file.size,
+                    file_versions: { v1: fileUrl },
+                    username: currentUser.username,
+                    status: 'pending'
+                }]);
+            
+            if (insertError) {
+                alert('Gagal menyimpan data: ' + insertError.message);
+            } else {
+                showToast('✅ Add-on berhasil diupload! Menunggu persetujuan admin.');
+                document.getElementById('uploadFrontForm').reset();
+                filePreview.style.display = 'none';
+                imagePreviewContainer.innerHTML = '';
+                selectedImageFiles = [];
+                closeModal('uploadFrontModal');
+            }
+            
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+
+        // ========== REPORT (BUG/SARAN) ==========
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const reportType = document.getElementById('reportType').value;
+            const reportEmail = document.getElementById('reportEmail').value;
+            const reportTitle = document.getElementById('reportTitle').value;
+            const reportDesc = document.getElementById('reportDesc').value;
+            const username = currentUser ? currentUser.username : 'Anonymous';
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = '📨 Mengirim...';
+            submitBtn.disabled = true;
+            
+            const { error: insertError } = await supabaseClient
+                .from('reports')
+                .insert([{
+                    type: reportType,
+                    email: reportEmail || null,
+                    title: reportTitle,
+                    description: reportDesc,
+                    username: username,
+                    status: 'pending',
+                    created_at: new Date()
+                }]);
+            
+            if (insertError) {
+                alert('Gagal mengirim laporan: ' + insertError.message);
+            } else {
+                showToast('✅ Laporan berhasil dikirim! Terima kasih atas masukannya.');
+                document.getElementById('reportForm').reset();
+                closeModal('reportModal');
+            }
+            
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        });
+
+        // ========== REQUEST SONG ==========
+        document.getElementById('requestForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const songName = document.getElementById('songName').value;
+            const artistName = document.getElementById('artistName').value;
+            const note = document.getElementById('songNote').value;
+            
+            const { error } = await supabaseClient
+                .from('song_requests')
+                .insert([{ song_name: songName, artist_name: artistName, note: note }]);
+            
+            if (error) {
+                alert('Gagal mengirim request: ' + error.message);
+            } else {
+                showToast('✅ Request lagu terkirim ke admin!');
+                document.getElementById('requestForm').reset();
+                closeModal('requestModal');
+            }
+        });
+
+        // ========== DELETE LIVE ADDON ==========
+        window.deleteLiveAddon = async function(id, title) {
+            if (confirm(`Hapus add-on "${title}" dari frontend?`)) {
+                const { error } = await supabaseClient
+                    .from('live_addons')
+                    .delete()
+                    .eq('id', id);
+                
+                if (error) {
+                    alert('Gagal menghapus: ' + error.message);
+                } else {
+                    showToast(`✅ Add-on "${title}" telah dihapus dari frontend!`);
+                    await renderCards();
+                    await showAdminPanel();
+                }
+            }
+        };
+
+        // ========== ADMIN PANEL ==========
+        let clickCount = 0;
+        let clickTimer;
+        
+        document.getElementById('logoBtn').addEventListener('click', async () => {
+            clickCount++;
+            clearTimeout(clickTimer);
+            clickTimer = setTimeout(() => { clickCount = 0; }, 800);
+            
+            if (clickCount === 3) {
+                await showAdminPanel();
+                clickCount = 0;
+            }
+        });
+        
+        async function showAdminPanel() {
+            const { data: submissions, error: subError } = await supabaseClient
+                .from('addon_submissions')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            const { data: songRequests, error: songError } = await supabaseClient
+                .from('song_requests')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            const { data: liveAddonsData, error: liveError } = await supabaseClient
+                .from('live_addons')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            const { data: reports, error: reportError } = await supabaseClient
+                .from('reports')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            let html = '';
+            
+            // SECTION 1: Upload Add-on Pending
+            html += `<div class="section-title">📦 Upload Add-on (Pending) - ${(submissions || []).filter(s => s.status === 'pending').length}</div>`;
+            
+            const pendingSubs = (submissions || []).filter(s => s.status === 'pending');
+            if (pendingSubs.length === 0) {
+                html += '<p style="color:#aaa; padding:10px;">Tidak ada upload pending.</p>';
+            } else {
+                html += `<div style="max-height: 400px; overflow-y: auto;">`;
+                pendingSubs.forEach(sub => {
+                    let reviewImagesHtml = '';
+                    if (sub.review_images && sub.review_images.length > 0) {
+                        const images = typeof sub.review_images === 'string' ? JSON.parse(sub.review_images) : sub.review_images;
+                        reviewImagesHtml = images.map(img => `<img src="${img}" style="width:40px; height:40px; object-fit:cover; border-radius:5px; margin-right:5px;">`).join('');
+                    }
+                    
+                    let fileVersions = {};
+                    try {
+                        fileVersions = sub.file_versions ? (typeof sub.file_versions === 'string' ? JSON.parse(sub.file_versions) : sub.file_versions) : {};
+                    } catch(e) { fileVersions = {}; }
+                    if (sub.file_url && !fileVersions.v1) fileVersions.v1 = sub.file_url;
+                    const versionCount = Object.keys(fileVersions).length;
+                    
+                    html += `
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <strong style="color: #ff9a5e;">${escapeHtml(sub.title)}</strong><br>
+                                    👤 ${escapeHtml(sub.creator)}<br>
+                                    🔐 ${escapeHtml(sub.username || '-')}<br>
+                                    📦 ${versionCount} versi<br>
+                                    📸 ${reviewImagesHtml || '-'}<br>
+                                    🔗 <a href="${sub.file_url}" target="_blank" style="color: #4caf50;">Download File</a><br>
+                                    <small>📅 ${new Date(sub.created_at).toLocaleString()}</small>
+                                </div>
+                                <div style="display: flex; gap: 8px; align-items: center;">
+                                    <button class="btn-small" onclick="approveAddonToLive(${sub.id})">✅ Approve</button>
+                                    <button class="btn-small btn-danger" onclick="rejectAddon(${sub.id})">❌ Reject</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            // SECTION 2: Add-on yang Sudah Dipublikasikan (LIVE)
+            html += `<div class="section-title">✅ Add-on yang Sudah Dipublikasikan (LIVE) - ${liveAddonsData?.length || 0}</div>`;
+            
+            if (!liveAddonsData || liveAddonsData.length === 0) {
+                html += '<p style="color:#aaa; padding:10px;">Belum ada add-on yang dipublikasikan.</p>';
+            } else {
+                html += `<div style="max-height: 300px; overflow-y: auto;">`;
+                liveAddonsData.forEach(addon => {
+                    html += `
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <span style="font-weight: bold; color: #ff9a5e;">📦 ${escapeHtml(addon.title)}</span><br>
+                                👤 ${escapeHtml(addon.creator)}<br>
+                                <small>📅 ${new Date(addon.created_at).toLocaleString()}</small>
+                            </div>
+                            <div>
+                                <button class="btn-small btn-danger" onclick="deleteLiveAddon(${addon.id}, '${escapeHtml(addon.title).replace(/'/g, "\\'")}')">✕ Hapus</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            // SECTION 3: Laporan Bug / Saran
+            html += `<div class="section-title">📋 Laporan Bug / Saran (${reports?.length || 0})</div>`;
+            
+            if (!reports || reports.length === 0) {
+                html += '<p style="color:#aaa; padding:10px;">Tidak ada laporan.</p>';
+            } else {
+                html += `<div style="max-height: 300px; overflow-y: auto;">`;
+                reports.forEach(report => {
+                    let typeIcon = '';
+                    switch(report.type) {
+                        case 'bug': typeIcon = '🐛 Bug'; break;
+                        case 'saran': typeIcon = '💡 Saran'; break;
+                        default: typeIcon = '📌 Lainnya';
+                    }
+                    html += `
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <strong style="color: #ff9a5e;">${typeIcon} - ${escapeHtml(report.title)}</strong><br>
+                                    📝 ${escapeHtml(report.description?.substring(0, 100))}${report.description?.length > 100 ? '...' : ''}<br>
+                                    👤 ${escapeHtml(report.username || 'Anonymous')}<br>
+                                    📧 ${escapeHtml(report.email || '-')}<br>
+                                    <small>📅 ${new Date(report.created_at).toLocaleString()}</small>
+                                </div>
+                                <div>
+                                    <button class="btn-small btn-danger" onclick="deleteReport(${report.id})">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            // SECTION 4: Request Lagu
+            html += `<div class="section-title">🎵 Request Lagu (${songRequests?.length || 0})</div>`;
+            
+            if ((songRequests || []).length === 0) {
+                html += '<p style="color:#aaa; padding:10px;">Tidak ada request lagu.</p>';
+            } else {
+                html += `<div style="max-height: 300px; overflow-y: auto;">`;
+                songRequests.forEach(req => {
+                    html += `
+                        <div style="background: rgba(0,0,0,0.3); border-radius: 10px; padding: 12px; margin-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+                                <div style="flex: 1;">
+                                    <strong style="color: #ff9a5e;">🎤 ${escapeHtml(req.song_name)} - ${escapeHtml(req.artist_name)}</strong><br>
+                                    📝 ${escapeHtml(req.note || '-')}<br>
+                                    <small>📅 ${new Date(req.created_at).toLocaleString()}</small>
+                                </div>
+                                <div>
+                                    <button class="btn-small btn-danger" onclick="deleteSongRequest(${req.id})">Hapus</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            
+            document.getElementById('adminContent').innerHTML = html;
+            document.getElementById('adminModal').style.display = 'flex';
+        }
+        
+        // ========== FUNGSI APPROVE ==========
+        window.approveAddonToLive = async function(id) {
+            const { data: submission, error: fetchError } = await supabaseClient
+                .from('addon_submissions')
+                .select('*')
+                .eq('id', id)
+                .single();
+            
+            if (fetchError || !submission) {
+                alert('Gagal mengambil data: ' + (fetchError?.message || 'Data tidak ditemukan'));
+                return;
+            }
+            
+            if (confirm(`Approve add-on "${submission.title}" ke live?`)) {
+                let reviewImages = [];
+                try {
+                    reviewImages = typeof submission.review_images === 'string' ? JSON.parse(submission.review_images) : (submission.review_images || []);
+                } catch(e) {
+                    reviewImages = [];
+                }
+                
+                let fileVersions = {};
+                try {
+                    fileVersions = submission.file_versions ? (typeof submission.file_versions === 'string' ? JSON.parse(submission.file_versions) : submission.file_versions) : {};
+                } catch(e) { fileVersions = {}; }
+                if (submission.file_url && !fileVersions.v1) fileVersions.v1 = submission.file_url;
+                
+                const { error: insertError } = await supabaseClient
+                    .from('live_addons')
+                    .insert([{
+                        title: submission.title,
+                        creator: submission.creator,
+                        description: submission.description,
+                        features: submission.features || '',
+                        versions: fileVersions,
+                        review_images: reviewImages,
+                        image_url: reviewImages.length > 0 ? reviewImages[0] : null,
+                        icon: '📦',
+                        submission_id: submission.id,
+                        created_at: new Date()
+                    }]);
+                
+                if (insertError) {
+                    alert('Gagal approve: ' + insertError.message);
+                } else {
+                    await supabaseClient
+                        .from('addon_submissions')
+                        .update({ status: 'approved' })
+                        .eq('id', id);
+                    
+                    showToast(`✅ Add-on "${submission.title}" telah ditambahkan ke live!`);
+                    await renderCards();
+                    await showAdminPanel();
+                }
+            }
+        };
+        
+        window.rejectAddon = async function(id) {
+            if (confirm('Tolak add-on ini?')) {
+                await supabaseClient
+                    .from('addon_submissions')
+                    .update({ status: 'rejected' })
+                    .eq('id', id);
+                showToast('Add-on ditolak.');
+                await showAdminPanel();
+            }
+        };
+        
+        window.deleteSongRequest = async function(id) {
+            if (confirm('Hapus request lagu ini?')) {
+                await supabaseClient
+                    .from('song_requests')
+                    .delete()
+                    .eq('id', id);
+                await showAdminPanel();
+            }
+        };
+        
+        window.deleteReport = async function(id) {
+            if (confirm('Hapus laporan ini?')) {
+                await supabaseClient
+                    .from('reports')
+                    .delete()
+                    .eq('id', id);
+                await showAdminPanel();
+            }
+        };
+        
+        // ========== UI FUNCTIONS ==========
+        function openSidebar() {
+            document.getElementById('sidebar').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+        
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        document.getElementById('loginMenuBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSidebar();
+            document.getElementById('authModal').style.display = 'flex';
+        });
+        
+        document.getElementById('myAddonsMenuBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSidebar();
+            showMyAddons();
+        });
+        
+        document.getElementById('accountMenuBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSidebar();
+            showAccount();
+        });
+        
+        document.getElementById('uploadAddonMenuBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSidebar();
+            document.getElementById('uploadFrontModal').style.display = 'flex';
+        });
+        
+        document.getElementById('reportMenuBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSidebar();
+            document.getElementById('reportModal').style.display = 'flex';
+        });
+        
+        document.getElementById('hamburgerBtn').addEventListener('click', openSidebar);
+        document.getElementById('closeSidebar').addEventListener('click', closeSidebar);
+        document.getElementById('overlay').addEventListener('click', closeSidebar);
+        
+        document.getElementById('requestSongBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            closeSidebar();
+            document.getElementById('requestModal').style.display = 'flex';
+        });
+        
+        window.onclick = (event) => {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        };
+        
+        // ========== INIT ==========
+        initSupabase();
+        console.log('✅ V-ADDON berhasil dimuat!');
+    </script>
+</body>
+</html>
